@@ -1,158 +1,92 @@
-var todoList = []
-var comdoList = [];
-var remList = [];
-var addButton = document.getElementById("add-button")
-var todoInput = document.getElementById("todo-input")
-var deleteAllButton = document.getElementById("delete-all")
-var allTodos = document.getElementById("all-todos");
-var deleteSButton = document.getElementById("delete-selected")
+const modal = document.getElementById("model");
+const openModalBtn = document.getElementById("open-task");
+const innerModal = document.getElementById("inner-modal");
+const addTaskBtn = document.getElementById("btn-task");
+const taskText = document.getElementById("task");
+const renderTask = document.getElementById("render-task");
+const allBtn = document.getElementById("all");
+const openBtn = document.getElementById("open");
+const closedBtn = document.getElementById("closed");
+const searchInput = document.getElementById("search")
+let filter = "all"; //all / open / closed
 
 
-//event listners for add and delete
-addButton.addEventListener("click", add)
-deleteAllButton.addEventListener("click", deleteAll)
-deleteSButton.addEventListener("click", deleteS)
+const goals = [];
 
-//event listeners for filtersk
-document.addEventListener('click', (e) => {
-    if (e.target.className.split(' ')[0] == 'complete' || e.target.className.split(' ')[0] == 'ci') {
-        completeTodo(e);
-    }
-    if (e.target.className.split(' ')[0] == 'delete' || e.target.className.split(' ')[0] == 'di') {
-        deleteTodo(e)
-    }
-    if (e.target.id == "all") {
-        viewAll();
-    }
-    if (e.target.id == "rem") {
-        viewRemaining();
-    }
-    if (e.target.id == "com") {
-        viewCompleted();
+const printTasks = (goals) => {
+    renderTask.innerHTML = "";
+
+    let filteredTask = [];
+
+    if (filter === "all") {
+        filteredTask = goals;
+    }else if (filter == "open"){
+        filteredTask = goals.filter(task => task.open === true);
+    }else {
+        filteredTask = goals.filter(task => task.open === false);
     }
 
+    filteredTask = filteredTask(task => task.text.toLowerCase().includes(searchInput.value.toLowerCase))
+
+    goals.map(task => {
+        // Creating a Wrapper div
+        const taskWrapper =document.createElement("div");
+        taskWrapper.classList.add("task-container");
+
+        //creating task text
+        const text = document.createElement("p");
+        text.innerText = task.text;
+        text.classList.add("task-text");
+
+        //creating status button
+        const btn = document.createElement("button");
+        btn.innerText = task.open ? "Open" : "Finished🎉";
+        task.open ? btn.classList.add("status-btn-open") : btn.classList.add("status-btn-closed")
+
+        //creating button even listener
+        btn.addEventListener('click', () => {
+            task.open = !task.open;
+            printTasks(goals);
+        })
+
+        //Append items to task wrapper
+        taskWrapper.append(text);
+        taskWrapper.append(btn);
+
+        renderTask.append(taskWrapper)
+    })
+}
+printTasks(goals);
+
+allBtn.addEventListener('click', () => {
+    filter = "all";
+});
+
+openBtn.addEventListener('click', () => {
+    filter = "open";
+    printTasks(openTasks);
+});
+
+closedBtn.addEventListener('click', () => {
+    filter = "closed"
+    printTasks(closedTasks);
 })
-//event listner for enter key
-todoInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        add();
+
+openModalBtn.addEventListener("click", () => {
+    modal.classList.add("active");
+});
+
+modal.addEventListener("click", (e) => {
+    if (!innerModal.contains(e.target)) { 
+        modal.classList.remove("active");
     }
 });
 
-//updates the all the remaining, completed and main list
-function update() {
-    comdoList = todoList.filter((ele) => {
-        return ele.complete
-
-    })
-    remList = todoList.filter((ele) => {
-        return !ele.complete
-    })
-    document.getElementById("r-count").innerText = todoList.length.toString();
-    document.getElementById("c-count").innerText = comdoList.length.toString();
-}
-
-//adds the task in main list
-function add() {
-    var value = todoInput.value;
-    if (value === '') {
-        alert("😮 Task cannot be empty")
-        return;
+addTaskBtn.addEventListener("click", () => {
+    if(taskText.value) {
+        const task = { text: taskText.value, open: true };
+        goals.push(task);
+        taskText.value = "";
+        printTasks(goals);
     }
-    todoList.push({
-        task: value,
-        id: Date.now().toString(),
-        complete: false,
-    });
-
-    todoInput.value = "";
-    update();
-    addinmain(todoList);
-}
-
-//renders the main list and views on the main content
-
-function addinmain(todoList) {
-    allTodos.innerHTML = ""
-    todoList.forEach(element => {
-        var x = `<li id=${element.id} class="todo-item">
-    <p id="task"> ${element.complete ? `<strike>${element.task}</strike>` : element.task} </p>
-    <div class="todo-actions">
-                <button class="complete btn btn-success">
-                    <i class=" ci bx bx-check bx-sm"></i>
-                </button>
-
-                <button class="delete btn btn-error" >
-                    <i class="di bx bx-trash bx-sm"></i>
-                </button>
-            </div>
-        </li>`
-        allTodos.innerHTML += x
-    });
-}
-
-//deletes and indiviual task and update all the list
-function deleteTodo(e) {
-    var deleted = e.target.parentElement.parentElement.getAttribute('id');
-    todoList = todoList.filter((ele) => {
-        return ele.id != deleted
-    })
-
-    update();
-    addinmain(todoList);
-
-}
-
-//completes indiviaula task and updates all the list
-function completeTodo(e) {
-    var completed = e.target.parentElement.parentElement.getAttribute('id');
-    todoList.forEach((obj) => {
-        if (obj.id == completed) {
-            if (obj.complete == false) {
-                obj.complete = true
-                e.target.parentElement.parentElement.querySelector("#task").classList.add("line");
-            } else {
-                obj.complete = false
-
-                e.target.parentElement.parentElement.querySelector("#task").classList.remove("line");
-            }
-        }
-    })
-
-    update();
-    addinmain(todoList);
-}
-
-//deletes all the tasks
-function deleteAll(todo) {
-
-    todoList = []
-    update();
-    addinmain(todoList);
-
-}
-
-//deletes only completed task
-function deleteS(todo) {
-
-    todoList = todoList.filter((ele) => {
-        return !ele.complete;
-    })
-
-    update();
-    addinmain(todoList);
-
-}
-
-// functions for filters
-function viewCompleted() {
-    addinmain(comdoList);
-}
-
-function viewRemaining() {
-
-    addinmain(remList);
-}
-function viewAll() {
-    addinmain(todoList);
-}
+})

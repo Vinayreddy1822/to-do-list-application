@@ -7,61 +7,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="to do.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Todo List App</title>
 </head>
 
 <body>
-    <!-- main todo container -->
-    <div class="container">
-        <!-- header that has input and add button -->
-        <header>
-            <h1>Todo List</h1>
-            <div class="input-section">
-                <input id="todo-input" type="text" placeholder="📑 Add your todo here.."
-                    class="input w-full max-w-xs" />
-                <button id="add-button" class="btn btn-add ">Add</button>
-            </div>
-        </header>
 
-        <!-- delete buttons -->
-
-        <div class="todos-filter">
-
-            <button id="delete-selected" class="btn btn-ghost delete-selected-btn">
-                Delete Selected
-            </button>
-            <button id="delete-all" class="btn btn-ghost delete-all-btn">
-                Delete All
-            </button>
-        </div>
-
-
-        <!-- this is the dynamic content which dds ups all the todos -->
-        <ul id="all-todos" class="todos-list">
-
-        </ul>
-
-
-        <!-- dropdown throgh which we can apply filters -->
-        <div class="filters">
-            <div class="dropdown">
-                <button class="dropbtn">Filter</button>
-                <div class="dropdown-content">
-                    <a href="#" id="all">All</a>
-                    <a href="#" id="rem">Pending</a>
-                    <a href="#" id="com">Completed</a>
-                </div>
-            </div>
-
-            <!-- value showing completed task and all -->
-            <div class="completed-task">
-                <p>Completed: <span id="c-count">0</span></p>
-            </div>
-            <div class="remaining-task">
-                <p>Total Tasks: <span id="r-count">0</span></p>
-            </div>
+    <div class="modal" id="model">
+        <div class="inner-modal" id="inner-modal">
+            <p class="add-text">Add A Task </p>
+            <input type="text" name="task" id="task" placeholder="Add Your Task...">
+            <button id="btn-task">Add Task</button>
         </div>
     </div>
+    <div class="container">
+
+        <h1>Track Your Goals</h1>
+        <h2>Change Your Life In 2025</h2>
+
+        <!-- button to add the task-->
+         <div class="btn-container">
+            <button class="open-task" id="open-task"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <div class="search-container">
+            <input type="text" name="search" id="search" placeholder="Search Your Tasks">
+            <div class="filter-btn-container">
+                <button class="filter-btn active" id="all">All Tasks</button>
+                <button class="filter-btn" id="open">Open Tasks</button>
+                <button class="filter-btn" id="closed">Finished Tasks</button>
+            </div>
+        </div>
+        <div id="render-task"></div>
+    </div>
+        
 
     <!-- JS -->
     <script src="script.js"></script>
