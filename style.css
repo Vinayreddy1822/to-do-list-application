@@ -95,17 +95,18 @@ h1 {
     text-align: center;
 }
 
-h2 {
+h2, h3{
     color: var(--text-color-light);
     text-align: center;
     font-weight: 400;
     font-size: 1.4rem;
-    margin-top: 5px;
+    margin-top: 4px;
 }
+
 
 .btn-container {
     width: 100%;
-    margin-top: 80px;
+    margin-top: 40px;
     display: flex;
     justify-content: flex-end;
 }
@@ -190,6 +191,7 @@ h2 {
 
 .status-btn-open {
     padding: 5px 30px;
+    margin-left: 10rem;
     background: var(--gray);
     color: var(--btn-color);
     border: 0;
@@ -199,8 +201,18 @@ h2 {
 
 .status-btn-closed {
     padding: 5px 30px;
+    margin-left: 10rem;
     background: var(--completed-color);
     color: var(--task-completed-color);
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    padding: 5px 10px;
+    background: var(--btn-color);
+    color: white;
     border: 0;
     border-radius: 5px;
     cursor: pointer;

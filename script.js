@@ -11,9 +11,17 @@ const searchInput = document.getElementById("search")
 let filter = "all"; //all / open / closed
 
 
-const goals = [];
+const goals = JSON.parse(localStorage.getItem("goals")) || [];
 
-const printTasks = (goals) => {
+const saveTasks = () => {
+    localStorage.setItem("goals", JSON.stringify(goals));
+}
+
+searchInput.addEventListener("input", () => {
+    printTasks();
+});
+
+const printTasks = () => {
     renderTask.innerHTML = "";
 
     let filteredTask = [];
@@ -26,9 +34,9 @@ const printTasks = (goals) => {
         filteredTask = goals.filter(task => task.open === false);
     }
 
-    filteredTask = filteredTask(task => task.text.toLowerCase().includes(searchInput.value.toLowerCase))
+    filteredTask = filteredTask.filter(task => task.text.toLowerCase().includes(searchInput.value.toLowerCase()))
 
-    goals.map(task => {
+    filteredTask.map(task => {
         // Creating a Wrapper div
         const taskWrapper =document.createElement("div");
         taskWrapper.classList.add("task-container");
@@ -41,7 +49,7 @@ const printTasks = (goals) => {
         //creating status button
         const btn = document.createElement("button");
         btn.innerText = task.open ? "Open" : "Finished🎉";
-        task.open ? btn.classList.add("status-btn-open") : btn.classList.add("status-btn-closed")
+        task.open ? btn.classList.add("status-btn-open") : btn.classList.add("status-btn-closed");
 
         //creating button even listener
         btn.addEventListener('click', () => {
@@ -49,27 +57,53 @@ const printTasks = (goals) => {
             printTasks(goals);
         })
 
+        //creating delete button
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "Delete❌";
+        deleteBtn.classList.add("delete-btn");
+
+        //delete button event listener
+        deleteBtn.addEventListener('click', () => {
+            const index = goals.indexOf(task);
+            goals.splice(index, 1);
+            localStorage.setItem("goals", JSON.stringify(goals));
+            printTasks(goals);
+        })
+
         //Append items to task wrapper
         taskWrapper.append(text);
         taskWrapper.append(btn);
+        taskWrapper.append(deleteBtn);
+        renderTask.append(taskWrapper);
 
-        renderTask.append(taskWrapper)
+        //saving to local storage
+        localStorage.setItem("goals", JSON.stringify(goals));
     })
 }
 printTasks(goals);
 
 allBtn.addEventListener('click', () => {
     filter = "all";
+    allBtn.classList.add("active");
+    openBtn.classList.remove("active");
+    closedBtn.classList.remove("active");
+    printTasks();
 });
 
 openBtn.addEventListener('click', () => {
     filter = "open";
-    printTasks(openTasks);
+    allBtn.classList.remove("active");
+    openBtn.classList.add("active");
+    closedBtn.classList.remove("active");
+    printTasks();
 });
 
 closedBtn.addEventListener('click', () => {
     filter = "closed"
-    printTasks(closedTasks);
+    allBtn.classList.remove("active");
+    openBtn.classList.remove("active");
+    closedBtn.classList.add("active");
+    printTasks();
 })
 
 openModalBtn.addEventListener("click", () => {
@@ -86,6 +120,7 @@ addTaskBtn.addEventListener("click", () => {
     if(taskText.value) {
         const task = { text: taskText.value, open: true };
         goals.push(task);
+        saveTasks();
         taskText.value = "";
         printTasks(goals);
     }
